@@ -1,11 +1,11 @@
 #class Support
 
 def factoring(num, start = 2) # => Array
-	candidate = (start..Math.sqrt(num).to_int).to_a	
-	factors = Array.new			
-	if index = candidate.index{ |x| num % x == 0 }				
+	candidate = (start..Math.sqrt(num).to_int).to_a
+	factors = Array.new
+	if index = candidate.index{ |x| num % x == 0 }
 		factors << candidate[index]
-		factors += factoring(num/candidate[index],candidate[index])	
+		factors += factoring(num/candidate[index],candidate[index])
 	else
 		factors << num
 	end
@@ -23,14 +23,14 @@ def fibonacci # => Enumerator
 end
 
 def gcd(x, y) # => Interger
-   y == 0 ? x : gcd(y, x%y)
+   y == 0 ? x : gcd(y, x % y)
 end
 
 def lcm(x, y)
 	x * y / gcd(x,y)
 end
 
-def prime?(n)
-	candidate = (2..Math.sqrt(n).to_int).to_a	
-	candidate.take_while{ |x| n % x != 0 }.size == candidate.size	
-end
+def allfactor(x) #=> array
+	candidate = (2..x/2).to_a
+	candidate.select{|factor| x % factor == 0 }
+end 

@@ -1,4 +1,4 @@
-require 'problem'
+require "problem.rb"
 puts a=true
 p = Problem.new()
 
