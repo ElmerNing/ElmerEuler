@@ -1,6 +1,7 @@
 require 'support.rb'
 require "mathn"
 require "memoize.rb"
+require "date"
 class Problem
 	
 	#Find the sum of all the multiples of 3 or 5 below 1000.
@@ -159,8 +160,7 @@ class Problem
 	include Memoize	
 	def problem15
 		def path_count(w, h)
-			return 1 if w == 0
-			return 1 if h == 0
+			return 1 if w == 0 or h == 0
 			count = 0
 			count += path_count(w-1, h) if w > 0
 			count += path_count(w, h-1) if h > 0
@@ -171,7 +171,32 @@ class Problem
 		memoize(:path_count)
 		path_count(20, 20)
 	end
+	#Power digit sum
+	def problem16
+		(2**1000).to_s.split("").inject(0){|sum, c| sum + c.to_i}
+	end
 
+	#Counting Sundays
+	def problem19
+		#so simple!
+		sundays = 0
+		1901.upto(2000) do |year|
+  			1.upto(12) do |month|
+    			sundays += 1 if Date.new(year,month,1).wday == 0
+  			end
+		end
+		return sundays
+	end
+
+	#Factorial digit sum
+	def problem20
+		factorial = (1..100).inject(1){ |factorial, x| factorial * x }
+		factorial.to_s.split("").inject(0){ |sum, c| sum + c.to_i }
+	end
+	
+	#Amicable numbers
+	def problem21
+	end
 
 
 	
