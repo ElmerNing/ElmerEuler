@@ -196,6 +196,24 @@ class Problem
 	
 	#Amicable numbers
 	def problem21
+		def d(n)
+			proper_divisors(n).inject(0){ |sum, x| sum + x }
+		end
+		sum = 0
+		d_array = (0..10000).map{|obj| d(obj) }
+		for n1 in (1...10000)
+			for n2 in (n1 + 1 .. 10000)
+				if d_array[n1] == n2 && n1 == d_array[n2]
+					sum += n1 + n2	
+				end
+			end
+		end
+		return sum
+	end
+
+	#Names scores
+	def problem23
+		
 	end
 
 
