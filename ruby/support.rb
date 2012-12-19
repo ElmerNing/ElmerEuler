@@ -30,7 +30,16 @@ def lcm(x, y)
 	x * y / gcd(x,y)
 end
 
-def allfactor(x) #=> array
-	candidate = (2..x/2).to_a
-	candidate.select{|factor| x % factor == 0 }
-end 
+def permutation(n, r)
+	a, b = r, n-r
+	#a, b = b, a if a < b
+	(a+1..n).inject(1) { |t,v| t*v}
+end
+
+def combination(n, r)
+	a, b = r, n-r
+	#a, b = b, a if a < b
+  	denom = (2..b).inject(1) { |t,v| t*v }    # (n-r)!
+  	permutation(n, r)/denom
+end
+
