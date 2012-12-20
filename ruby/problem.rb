@@ -196,11 +196,8 @@ class Problem
 	
 	#Amicable numbers
 	def problem21
-		def d(n)
-			proper_divisors(n).inject(0){ |sum, x| sum + x }
-		end
 		sum = 0
-		d_array = (0..10000).map{|obj| d(obj) }
+		d_array = (0..10000).map{|obj| proper_divisors_sum(obj) }
 		for n1 in (1...10000)
 			for n2 in (n1 + 1 .. 10000)
 				if d_array[n1] == n2 && n1 == d_array[n2]
@@ -211,11 +208,13 @@ class Problem
 		return sum
 	end
 
-	#Names scores
+	#Non-abundant sums
 	def problem23
-		
+		#(2..28123)
+		abundant = (1..28123).select(){ |x| proper_divisors_sum(x) > x }
+		abundant_sum = abundant.repeated_combination(2).map {|x| x[0] + x[1]}
+		((1..28123).to_a - abundant_sum).inject(0) { |sum, n| sum + n}
 	end
-
 
 	
 

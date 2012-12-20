@@ -3,7 +3,7 @@ puts a=true
 p = Problem.new()
 
 t1 = Time.now
-(15..400).each do |n|
+(23..400).each do |n|
 	t1 = Time.now	
 	r = p.send("problem%d"%n)
 	t2 = Time.now

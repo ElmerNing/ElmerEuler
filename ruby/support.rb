@@ -47,7 +47,7 @@ def proper_divisors(x) # => Array
 	return divisors
 end 
 
-def sum_of_proper_divisors(x)
-	
+def proper_divisors_sum(x)
+	proper_divisors(x).inject(0) {|sum, x| sum + x}
 end
 
