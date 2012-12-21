@@ -14,7 +14,7 @@ end
 	
 def fibonacci # => Enumerator
 	Enumerator.new { |y|  
-   		a = 1; b = 2;
+   		a = 1; b = 1;
    		loop {  
    			y << a
    			a, b = b, a + b 
@@ -31,13 +31,11 @@ def lcm(x, y) # => Interger
 end
 
 def permutation(n, r) # => Interger
-	a, b = r, n-r
-	(a+1..n).inject(1) { |t,v| t*v}
+	(n-r+1..n).inject(1) { |t,v| t*v}
 end
 
 def combination(n, r) # => Interger
-	a, b = r, n-r
-  	denom = (2..b).inject(1) { |t,v| t*v }    # (n-r)!
+  	denom = (2..r).inject(1) { |t,v| t*v }    # (n-r)!
   	permutation(n, r) / denom
 end
 

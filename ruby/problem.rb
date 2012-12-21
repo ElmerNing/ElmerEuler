@@ -210,15 +210,64 @@ class Problem
 
 	#Non-abundant sums
 	def problem23
-		#(2..28123)
 		abundant = (1..28123).select(){ |x| proper_divisors_sum(x) > x }
 		abundant_sum = abundant.repeated_combination(2).map {|x| x[0] + x[1]}
 		((1..28123).to_a - abundant_sum).inject(0) { |sum, n| sum + n}
 	end
-
+	
+	#Lexicographic permutations
+	def problem24
+		def IndexOfPerm(array, index)
+			if (index <= 0)
+				return array
+			else
+				div, mod = index.divmod(permutation(array.size - 1, array.size - 1))	
+				return ([]<<array.delete_at(div)) + IndexOfPerm(array, mod)
+			end
+		end
+		IndexOfPerm([0,1,2,3,4,5,6,7,8,9,], 1e6 - 1).inject(""){|str, element| str + element.to_s}		
+	end
 	
 
-
+	#1000-digit Fibonacci number
+	def problem25
+		fibonacci.take_while {|x| x.to_s.size<1000}.size + 1
+	end
+	
+	#Reciprocal cycles
+	def problem26
+		def cycles(x)
+			mods, divs = [], []
+			dividend, divisor =  x.numerator, x.denominator
+			loop do	
+				div, mod = dividend.divmod(divisor)
+				dividend = mod * 10
+				divs<<div
+				if index = mods.index(mod)
+					return divs[index+1..mods.size] 
+				end
+				mods<<mod
+			end
+		end
+		(2..1000).inject([2, 0]) do |max, x|
+			cycles_size = cycles(1/x).size
+			if cycles_size > max[1]
+				max = [x, cycles_size]
+			else
+				max
+			end
+		end[0]
+	end
+	
+	#Quadratic primes
+	def problem27
+		#b must be prime, get this from f(x) = prime when x = 0
+		prime = Prime.new
+		bs = prime.take_while { |x| x < 1000 }
+		#a+b+1 must be prime, get this from f(x) prime when x = 1
+		(-999..999).select{|x| x <100}
+	end
+	
 
 
 
