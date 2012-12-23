@@ -264,8 +264,71 @@ class Problem
 		#b must be prime, get this from f(x) = prime when x = 0
 		prime = Prime.new
 		bs = prime.take_while { |x| x < 1000 }
-		#a+b+1 must be prime, get this from f(x) prime when x = 1
-		(-999..999).select{|x| x <100}
+		bs =bs  + bs.map{ |x| x * -1 }
+		max_n, max_a, max_b = 0, 0, 0
+		for b in bs
+			for a in -1999.step(1999,2)
+				n = 0
+				while prime.prime?(n*n + a*n + b)
+					n+=1
+				end
+				if n > max_n
+					max_n, max_a, max_b = n, a, b
+				end
+			end
+		end
+		max_a * max_b
+	end
+	
+	#Number spiral diagonals
+	def problem28
+		sum, n, step = 1, 1, 2
+		500.times do |i|
+			4.times do |j|
+				n += step
+				sum += n
+				#puts n
+			end
+			step += 2
+		end
+		sum
+	end
+	
+	#Distinct powers
+	def problem29
+		pows = []
+		for a in (2..100)
+			for b in (2..100)
+				pows << a**b
+			end
+		end
+		pows.uniq.sort.size
+	end
+	
+	#Digit fifth powers
+	def problem30
+		powers = []
+		for x in (2..1e6)
+			nums = x.to_s.split("")
+			if x == nums.inject(0){ |sum, x| sum + x.to_i**5 }
+				powers << x
+			end
+		end
+		fifthpowers.inject(0) {|sum, x| sum + x}
+	end
+	
+	#Coin sums
+	def problem31
+		#Dynamic programming
+		target = 200
+		coins = [1,2,5,10,20,50,100,200]
+		ways = [1] + [0] * target
+		for coin in coins
+		for i in (coin..target)
+				ways[i] += ways[i-coin]
+			end
+		end
+		ways[target]
 	end
 	
 
