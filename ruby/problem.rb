@@ -317,24 +317,169 @@ class Problem
 		fifthpowers.inject(0) {|sum, x| sum + x}
 	end
 	
-	#Coin sums
+	#Coin sums	
 	def problem31
-		#Dynamic programming
+	if false
+		#Dynamic programming without optimzing
+		target = 200
+		coins = [1,2,5,10,20,50,100,200]
+		ways = [Array.new(coins.size, 1)]
+		target.times do 
+			array = Array.new(coins.size, 0)
+			array[0] = 1 
+			ways << array
+		end
+		
+		#ways[m][i] indicate the number of ways to make m using coins[0..i]
+		for i in (1...coins.size)
+			coin = coins[i]
+			for m in (0..target)
+				if m < coin
+					ways[m][i] = ways[m][i-1]
+				else
+					ways[m][i] = ways[m][i-1] + ways[m-coin][i]
+				end
+			end
+ 		end		
+		return ways[200][coins.size-1]
+	else	
+		#optimizing alg
+		#be aware of ways[m][i-1] is used only by ways[m][i], so we can merge ways[m][i-1] by accmulation
 		target = 200
 		coins = [1,2,5,10,20,50,100,200]
 		ways = [1] + [0] * target
 		for coin in coins
-		for i in (coin..target)
+			for i in (coin..target)
 				ways[i] += ways[i-coin]
 			end
 		end
 		ways[target]
 	end
+	end
 	
+	#Pandigital products
+	def problem32
+		xy = []
+		(2..100).each do |x|
+			(x..9999/x).each do |y|
+				if ("%d%d%d"%[x,y,x*y]).split("").sort.join.eql?("123456789")
+					xy << (x * y)
+				end
+			end
+		end
+		xy.uniq.reduce(:+)
+	end
+	
+	#Digit canceling fractions
+	def problem33
+		non_trivial = []
+		(1..9).each do |x|
+			(1...x).each do |y1|
+				(y1..9).each do |y2|
+					y1x, xy2 = y1*10 + x, x*10 + y2
+					if y1x / xy2 == y1 / y2
+							non_trivial << y1x / xy2
+					end
+				end
+			end
+		end	
+		non_trivial.inject(:*).denominator
+	end
+	
+	#Digit factorials
+	def problem34
+		curious  = []
+		factorial = (0..9).map{|x| x==0 ? 1 : (1..x).inject(:*)}
+		(3...100000).each do |xx|
+			sum = xx.to_s.split("").inject(0) do |sum, x|
+				sum += factorial[x.to_i]
+			end
+			if sum == xx
+				curious << xx
+			end
+		end
+		curious.inject(:+) 
+	end
+	
+	#Circular primes
+	def problem35
+		prime_enum = Prime.new
+		primes, circular = Hash.new(false), []
+		
+		while (prime = prime_enum.next) < 1e6
+			primes[prime] = true
+		end
+		
+		primes.each_key do |x|
+			s = x.to_s
+			is_circular = true
+			while (s = s[-1,1] + s[0..-2]) != x.to_s
+				if not primes[s.to_i]
+					is_circular = false
+				end
+			end
+			circular << x if is_circular
+		end
+		circular.size
+	end
+	
+	#Double-base palindromes
+	def problem36
+		pals = []
+		#(1..1e6).each do |x|
+		#	dec = x.to_s
+		#	bin = "%b"%x
+		#	if dec == dec.reverse and bin == bin.reverse
+		#		pals << x
+		#	end
+		#end
+		
+		#optimizing
+		(1..999).each do |x|
+			s = x.to_s
+			rs = s.reverse
+			
+			pal1 = (s + rs).to_i
+			pal2 = (s + rs[1..-1]).to_i
+			
+			bin_pal1 = "%b"%pal1
+			bin_pal2 = "%b"%pal2
+			
+			if bin_pal1.reverse.eql?(bin_pal1)
+				pals << pal1
+			end
+			if bin_pal2.reverse.eql?(bin_pal2)
+				pals << pal2
+			end
+		end
+		pals.inject(:+)
+	end
+	
+	#Truncatable primes
+	def problem37
+		def truncatable?(x)
+			s = x.to_s
+			count = s.size
+			for i in (1...count)
+				return false if not s[i..-1].to_i.prime?
+				return false if not s[0..-1-i].to_i.prime?
+			end
+			return true
+		end
+		
+		truncat = []
+		prime = Prime.new
+		4.times{prime.next}
+		loop do
+			break if truncat.size >= 11
+			x = prime.next
+			truncat << x if truncatable?(x)
+		end
+		truncat.inject(:+)
+	end
 
-
-
-
+	
+	
 
 
 

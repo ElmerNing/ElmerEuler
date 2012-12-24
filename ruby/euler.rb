@@ -1,9 +1,9 @@
 require "problem.rb"
-puts a=true
-p = Problem.new()
 
+p = Problem.new()
 t1 = Time.now
-(31..400).each do |n|
+
+(36..400).each do |n|
 	t1 = Time.now	
 	r = p.send("problem%d"%n)
 	t2 = Time.now
