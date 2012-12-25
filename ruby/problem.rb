@@ -477,7 +477,217 @@ class Problem
 		end
 		truncat.inject(:+)
 	end
+	
+	#Pandigital mutiples
+	def problem38
+		pandigitals = []
+		for x in (1..10000)
+			pandigital = ''
+			for n in (1..10)
+				pandigital += (n*x).to_s
+				break if pandigital.size >= 9
+			end
+			if pandigital.size == 9 and pandigital.split("").sort.join == "123456789"
+				pandigitals << pandigital.to_i
+			end
+		end
+		pandigitals.sort[-1]
+	end
+	
+	#Integer right triangles
+	def problem39
+		right_tri = Hash.new(0)
+		for a in (1..1000)
+			for b in (a..1000-a)
+				c = Math.sqrt(a*a + b*b)
+				if c.class == Fixnum && a+b+c <= 1000
+					right_tri[a+b+c] += 1
+				end
+			end
+		end
+		max, max_p = 0
+		right_tri.each do |key, value|
+			if value > max
+				max = value
+				max_p = key
+			end
+		end
+		return max_p
+	end
+	
+	#Champernowne's constant
+	def problem40
+		def digit_at(n)
+			digits = 1
+			n = n - 1
+			while true
+				numbers = 9 * (10**(digits-1)) * digits
+				if n > numbers
+					n = n - numbers
+				else
+					break
+				end
+				digits = digits + 1
+			end
+			
+			num = n.div(digits) + (10**(digits-1))
+			return num.to_s[n%digits].to_i
+		end
+		digit_at(1) * digit_at(10) * digit_at(100) * digit_at(1000) * digit_at(10000) * digit_at(100000) * digit_at(1000000)
+	end
+	
+	#Pandigital prime
+	def problem41
+		andigitals = (1..7).to_a.permutation(7).each.map { |x| x.join.to_i }.sort!.reverse
+		max = 0
+		andigitals.each do |x|
+			if x.prime?
+				return x
+			end
+		end
+		return 0
+	end
+	
+	#Pentagon numbers
+	def problem45
+		max = 60000
+		t = (1..max).to_a.map{|x| x*(x+1)/2}
+		p = (1..max).to_a.map{|x| x*((3*x)-1)/2}
+		h = (1..max).to_a.map{|x| x*((2*x)-1)}
+		(t & p & h)[2]
+	end
+	
+	#Goldbach's other conjecture
+	def problem46
+		max = 6000
+		sqr_hash = {}
+		(1..Math.sqrt(max)).each{ |x| sqr_hash[x*x] = nil }
+		
+		prime_list = []
+		Prime.new.each do |x|
+			break if x > max			
+			prime_list << x
+		end
+		
+		3.step(6000,2).each do |x|
+			next if x.prime?
+			goldbach = false
+			prime_list.each do |prime|
+				break if prime > x
+				goldbach = true if sqr_hash.has_key?((x-prime)/2)
+			end
+			return x if not goldbach
+		end
+		return 0
+	end
+	
+	#Distinct primes factors
+	def problem47
+		x1,x2,x3,x4 = 644, 645, 646, 647
+		f1,f2,f3,f4 = factoring(x1).uniq, factoring(x2).uniq, factoring(x3).uniq, factoring(x4).uniq
+		loop do
+			x1,x2,x3,x4 = x2, x3, x4, x4+1
+			f1,f2,f3,f4 = f2, f3, f4, factoring(x4).uniq
+			if f1.size == 4 and f2.size == 4 and f3.size == 4 and f4.size == 4
+				return [x1,x2,x3,x4]
+			end
+		end
+	end
+	
+	#Self powers
+	def problem48
+		sum = (1..1000).to_a.inject(0){|sum, x| sum + x**x}
+		sum.to_s[-10,10]
+	end
+	
+	#Prime permutations
+	def problem49
+		(1..9).to_a.repeated_combination(4).each do |x|
+			ps = []
+			x.permutation(4).each do |p|
+				p = p.join.to_i
+				if (!ps.include?(p)) and p.prime?
+					ps << p
+				end
+			end
+			
+			next if ps.size < 3
+			ps.sort
+			
+			ps.combination(3).each do |ppp|
+				if ppp[1]-ppp[0] == ppp[2] - ppp[1] and ppp[0] != 1487
+					return ppp.join
+				end
+			end
+		end
+		return nil
+	end
+	
+	#Consecutive prime sum
+	def problem50
+		prime_list = []
+		Prime.new.each do |x|
+			break if x > 1e6		
+			prime_list << x
+		end
+		1000.step(1,-1) do |n|
+			(0..prime_list.size-n).each do |start|
+				sum = prime_list[start, n].inject(:+)
+				break if sum > 1e6
+				return sum if sum.prime?
+			end	
+		end
+	end
+	
+	#Prime digit replacements
+	def problem51
+		def index_of(array, v)
+			return array.each_index.inject([]) do |index_of, index|
+				if array[index] == v
+					index_of << index
+				end
+				index_of
+			end
+		end
+		
+		def take_while_prime(array, replace_index, replace_values)
+			#just replacing replace_index get the right answer
+			#replace all the subset of replace_index to be more strict
+			ret = []
+			replace_values.each do |value|
+				new_array = Array.new(array)
+				replace_index.each { |index| new_array[index] = value }
+				new_value = new_array.join.to_i
+				ret << new_value if new_value.prime?
+			end
+			return ret
+		end
+		
+		def replace_prime?(prime)	
+			split = prime.to_s.split("").map{ |x| x.to_i }
+			index_of_x = {}
+			index_of_x[0] = index_of(split, 0)
+			index_of_x[1] = index_of(split, 1)
+			index_of_x[2] = index_of(split, 2)
+			
+			(0..2).each do |n|
+				next if index_of_x[n].size == 0
+				replace_values = (n+1.. 9)
+				ret = take_while_prime(split, index_of_x[n], replace_values)
+				return true if ret.size >= 7
+			end
+			return false
+		end
 
+		
+		prime = Prime.new
+		x = 0
+		loop do
+			x = prime.next
+			break if replace_prime?(x)
+		end
+		x
+	end
 	
 	
 
