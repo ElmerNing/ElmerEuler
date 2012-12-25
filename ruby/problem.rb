@@ -679,7 +679,6 @@ class Problem
 			return false
 		end
 
-		
 		prime = Prime.new
 		x = 0
 		loop do
@@ -689,7 +688,50 @@ class Problem
 		x
 	end
 	
+	#
+	def problem52
+		n = 1
+		loop do
+			all = [n, n*2, n*3, n*4, n*5, n*6]
+			all = all.map{ |x| x.to_s.split("").sort! }
+			if all[0] == all[1] and all[1] == all[2] and all[2] == all[3] and all[3] == all[4] and all[4] == all[5]
+				return n
+			end
+			n += 1
+		end
+	end
 	
+	#Combinatoric selections
+	def problem53
+		num = 0
+		for n in (23..100)
+			for r in (2..n-2)
+				x = combination(n, r)
+				num += 1 if x > 1e6
+			end
+		end
+		return num
+	end
+	
+	#Lychrel numbers
+	def problem55
+		def reverse(x)
+			return x.to_s.split("").reverse.join.to_i
+		end
+		num = 0
+		(1..10000).each do |x|
+			lychrel = true
+			for i in (1..50)
+				x = x + reverse(x)
+				if x == reverse(x)
+					lychrel = false
+					break
+				end
+			end
+			num += 1 if lychrel
+		end
+		num
+	end
 
 
 
