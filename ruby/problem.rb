@@ -732,15 +732,108 @@ class Problem
 		end
 		num
 	end
+	
+	#Powerful digit sum
+	def problem56
+		max = 0
+		for a in (10..100)
+			for b in (10..100)
+				pow = a**b
+				sum = pow.to_s.split("").inject(0){ |sum, x| sum + x.to_i }
+				max = sum if sum > max
+			end
+		end
+		return max
+	end
 
+	#Square root convergents
+	def problem57
+		fractions = []
+		fractions << (1+1/2)
+		for i in (1..999)
+			fractions << ( 1 + 1 / (1 + fractions[-1]) )
+		end
+		#fractions.each do |x|
+		#	print x.numerator.to_s.split(""), "\n"
+		#	print x.denominator.to_s.split(""), "\n"
+		#end
+		fractions.inject(0) do |count, x|
+			if x.numerator.to_s.split("").size > x.denominator.to_s.split("").size
+				count += 1
+			end
+			count
+		end
+	end
+	
+	#Spiral primes
+	def problem58
+		total, prime, n, step = 1, 0, 1, 2
+		#primes = []
+		loop do
+			4.times do |j|
+				n += step
+				prime += 1 if n.prime?
+			end
+			total += 4
+			step += 2
+			break if prime * 10 < total
+		end
+		step-1
+	end
 
-
-
-
-
-
-
-
+	#XOR decryption
+	def problem59
+		codes = File.read("cipher1.txt").chomp.split(",").map{|x| x.to_i}
+		
+		key_len = 3
+		('a'..'z').to_a.repeated_permutation(key_len).each do |abc|	
+			
+			key = abc.join.bytes.map{|x| x}
+			
+			decodes_asii = codes.each_index.map { |index| codes[index] ^ key[index % key_len] }
+			
+			decodes = decodes_asii.inject("") do |decodes, c|
+				decodes + c.chr
+			end
+			
+			if decodes.include?(" the ")
+				return decodes_asii.inject(:+)
+			end
+		end
+	end
+	
+	#Prime pair sets
+	def problem60
+		#too slow 
+		def prime_set(n, prime_list)		
+			if n == 1
+				return prime_list.map{ |x| [x] }
+			end	
+			set_n_1 = prime_set(n-1, prime_list)
+			set_n = []
+			set_n_1.each do |set|
+				prime_list.each do |x|
+					ret = true
+					set.each do |y|
+						next if [x,y].join.to_i.prime? and [y,x].join.to_i.prime?
+						ret = false
+						break
+					end
+					if ret
+						set_n << (Array.new(set) << x)
+					end
+				end
+			end		
+			set_n	
+		end	
+		prime_list = []
+		Prime.new.each do |x|
+			break if x > 20000			
+			prime_list << x
+		end
+		
+		prime_set(5, prime_list)
+	end
 
 
 	def method_missing(method_name, *args, &block)
