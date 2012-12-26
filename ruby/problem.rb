@@ -804,7 +804,6 @@ class Problem
 	
 	#Prime pair sets
 	def problem60
-		#too slow 
 		def prime_set(n, prime_list)		
 			if n == 1
 				return prime_list.map{ |x| [x] }
@@ -824,7 +823,10 @@ class Problem
 					end
 				end
 			end		
-			set_n	
+			set_n.each do |x|
+				x.sort!
+			end
+			set_n.uniq
 		end	
 		prime_list = []
 		Prime.new.each do |x|
