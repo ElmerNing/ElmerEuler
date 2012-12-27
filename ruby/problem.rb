@@ -839,6 +839,25 @@ class Problem
 	end
 
 	def problem61
+		
+		def digit4_gen()
+			(1..1000).inject(Set.new) do |set, n|
+				x = yield(n)
+				digit = x.to_s.split("").size
+				set.add(x) if digit == 4
+				set
+			end
+		end
+		
+		tr3 = digit4_gen() do |n| n*(n+1)/2 end
+		tr4 = digit4_gen() do |n| n*n end
+		tr5 = digit4_gen() do |n| n*(3*n - 1)/2 end
+		tr6 = digit4_gen() do |n| n*(2*n - 1) end
+		tr7 = digit4_gen() do |n| n*(5*n - 3)/2 end
+		tr8 = digit4_gen() do |n| n*(3*n - 2) end
+		
+		#[tr3,tr4,tr5,tr6,tr7,tr8]
+		tr3.each do 
 	end
 	
 	
