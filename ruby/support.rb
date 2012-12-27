@@ -49,3 +49,12 @@ def proper_divisors_sum(x)
 	proper_divisors(x).inject(0) {|sum, x| sum + x}
 end
 
+def primes(upto)
+	prime_list = []
+	Prime.new.each do |x|
+		break if x > upto			
+		prime_list << x
+	end
+	return prime_list
+end
+
