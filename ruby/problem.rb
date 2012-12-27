@@ -803,7 +803,7 @@ class Problem
 	end
 	
 	#Prime pair sets
-	def problem60
+	def problem60__
 		def prime_set(n, prime_list)		
 			if n == 1
 				return prime_list.map{ |x| [x] }
@@ -836,7 +836,31 @@ class Problem
 		
 		prime_set(5, prime_list)
 	end
-
+	
+	#Prime pair sets
+	def problem60
+		def gen_primes(upto)
+			prime_list = []
+			Prime.new.each do |x|
+				break if x > upto			
+				prime_list << x
+			end
+			return prime_list
+		end
+		
+		prime_list = gen_primes(10000)
+		count = 0
+		prime_pairs = [] 
+		for i in (0..prime_list.size)
+			for j in (i+1..prime_list.size)
+				x, y = prime_list[i], prime_list[j]
+				if [x,y].join.to_i.prime? and [y,x].join.to_i.prime?
+					prime_pairs << [x,y]
+				end
+			end
+		end
+		prime_list.size
+	end
 
 	def method_missing(method_name, *args, &block)
 		#missing the method whose name is "problemXX"
