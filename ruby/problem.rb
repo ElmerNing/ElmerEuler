@@ -949,7 +949,25 @@ class Problem
 
 	#Diophantine equation
 	def problem66
+		def sqrt_root_cf(n)
+			a0 = (n**0.5).to_i
+			as = [a0]
+			if a0*a0 == n
+				return as
+			end
+			
+			d, m = a0, 1
+			loop do
+				m = (n - d*d)/m
+				a = (d + a0).div(m)
+				d = a*m - d
+				as << a
+				break if m == 1 && d == a0
+			end
+			return as
+		end
 		
+		print sqrt_root_cf(23)
 	end
 	
 	
