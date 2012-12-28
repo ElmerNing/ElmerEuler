@@ -838,28 +838,119 @@ class Problem
 		return @solution
 	end
 
-	def problem61
-		
-		def digit4_gen()
-			(1..1000).inject(Set.new) do |set, n|
+	#Cyclical figurate numbers
+	def problem61	
+		def poly_gen()
+			poly_hash = Hash.new{ |hash,key| hash[key] = Set.new() }
+			n = 1
+			loop do
 				x = yield(n)
-				digit = x.to_s.split("").size
-				set.add(x) if digit == 4
-				set
+				return poly_hash if x > 10000
+				poly_hash[x.div(100)].add(x) if x >= 1000
+				n += 1
 			end
 		end
+
+		poly3 = poly_gen() do |n| n*(n+1)/2 end
+		poly4 = poly_gen() do |n| n*n end
+		poly5 = poly_gen() do |n| n*(3*n - 1)/2 end
+		poly6 = poly_gen() do |n| n*(2*n - 1) end
+		poly7 = poly_gen() do |n| n*(5*n - 3)/2 end
+		poly8 = poly_gen() do |n| n*(3*n - 2) end
 		
-		tr3 = digit4_gen() do |n| n*(n+1)/2 end
-		tr4 = digit4_gen() do |n| n*n end
-		tr5 = digit4_gen() do |n| n*(3*n - 1)/2 end
-		tr6 = digit4_gen() do |n| n*(2*n - 1) end
-		tr7 = digit4_gen() do |n| n*(5*n - 3)/2 end
-		tr8 = digit4_gen() do |n| n*(3*n - 2) end
+		def cyclical(prefix, poly_list, nnn) 
+			if poly_list.size == 0
+				return nnn if nnn[0].div(100) == nnn[-1]%100 	
+			end
+			for poly in poly_list
+				for x in poly[prefix]
+					ans = cyclical(x%100, poly_list - [poly], nnn + [x])
+					return ans if ans
+				end
+			end
+			return nil
+		end
 		
-		#[tr3,tr4,tr5,tr6,tr7,tr8]
-		tr3.each do 
+		for set in poly3.values
+			for x in set
+				ans = cyclical( x%100, [poly4, poly5, poly6, poly7, poly8], [x] )
+				return ans.inject(:+) if ans
+			end
+		end
 	end
 	
+	#Cubic permutations
+	def problem62
+		cubic_hash = Hash.new{ |hash,key| hash[key] = [] }
+		(1..10000).each do |x|
+			xxx = x**3
+			xxx_sort = xxx.to_s.split("").sort!.join
+			cubic_hash[xxx_sort] << xxx
+		end
+		
+		solution = []
+		cubic_hash.each_value do |v|
+			if v.size == 5
+				solution << v
+			end
+		end
+		solution.min[0]
+	end
+	
+	#Powerful digit counts
+	def problem63
+		count = 0
+		for x in (1..9)
+			for n in (1..100)
+				count += 1 if (x**n).to_s.split("").size == n
+			end
+		end
+		count
+	end
+	
+	#Odd period square roots
+	def problem64
+		count = 0
+		for n in (2..10000)	
+			a0 = (n**0.5).to_i
+			next if a0*a0 == n
+			
+			d, m, period = a0, 1, 0
+			loop do
+				period += 1
+				m = (n - d*d)/m
+				a = (d + a0).div(m)
+				d = a*m - d
+				break if m == 1 && d == a0
+			end
+			count += 1 if period % 2 != 0
+		end
+		return count
+	end
+	
+	#Convergents of e
+	def problem65
+		upto = 99
+		e = [2] + (0..upto-1).to_a.map do |x|
+			if (x+2)%3 == 0
+				(x+2).div(3) * 2
+			else
+				1
+			end
+		end
+		#e = [1,2,2,2,2]
+		now = 1.0/0
+		upto.downto(0) do |n|
+			now = e[n] + (1/now)
+		end
+		now.numerator.to_s.split("").inject(0) {|sum, x| sum + x.to_i}
+		#now
+	end
+
+	#Diophantine equation
+	def problem66
+		
+	end
 	
 	
 	
