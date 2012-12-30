@@ -949,34 +949,123 @@ class Problem
 
 	#Diophantine equation
 	def problem66
-		def sqrt_root_cf(n)
-			a0 = (n**0.5).to_i
-			as = [a0]
-			if a0*a0 == n
-				return as
+		#x*x - d*y*y = 1 is also called pell's equation
+		def cf_of_sqrt(n)
+			Enumerator.new do |y|
+				a0 = (n**0.5).to_i
+				y << a0
+				d, m = a0, 1
+				loop do
+					m = (n - d*d) / m
+					a = (d + a0).div(m)
+					d = a*m - d
+					y << a
+				end
 			end
-			
-			d, m = a0, 1
-			loop do
-				m = (n - d*d)/m
-				a = (d + a0).div(m)
-				d = a*m - d
-				as << a
-				break if m == 1 && d == a0
-			end
-			return as
 		end
 		
-		print sqrt_root_cf(23)
+		def idx_of_cf(cf, index)
+			return cf.next if index == 0
+			a = cf.next
+			return a + 1 / idx_of_cf(cf, index - 1)
+		end
+		
+		max_x, max_d = 0, 0
+		for d in (2..1000)
+			next if Math.sqrt(d).class == Fixnum
+			cf = cf_of_sqrt(d)
+			n, x, y = 1, 0, 0
+			loop do
+				cf.rewind
+				xy = idx_of_cf(cf, n)
+				x, y = xy.numerator, xy.denominator
+				break if x*x - d*y*y == 1
+				n += 1
+			end
+			max_x, max_d = x, d if x > max_x
+		end
+		return max_d
+	end
+	
+	#Maximum path sum II
+	def problem67
+		array = []
+		File.readlines("triangle.txt").each do |line|
+			array << line.chomp.split(" ").map { |x| x.to_i}
+		end
+		array.reverse!
+		
+		for j in (1...array.size)
+			line, line_prev = array[j], array[j-1]
+			line.each_index do |i| 
+				n = [line_prev[i] , line_prev[i+1]].max
+				line[i] += n
+			end
+		end
+		array[-1]
+	end
+	
+	#Magic 5-gon ring
+	def problem68 
+		slns = []
+		for sln in (1..10).to_a.permutation(10)
+			sum = []
+			sum << sln[0] + sln[1] + sln[2]
+			sum << sln[3] + sln[2] + sln[4]
+			sum << sln[5] + sln[4] + sln[6]
+			sum << sln[7] + sln[6] + sln[8]
+			sum << sln[9] + sln[8] + sln[1]
+			next if not sum.uniq.size == 1
+			next if not sln[0] == [sln[0],sln[3],sln[5],sln[7],sln[9]].min
+			s = [sln[0] , sln[1] , sln[2]].join +
+				[sln[3] , sln[2] , sln[4]].join + 
+				[sln[5] , sln[4] , sln[6]].join + 
+				[sln[7] , sln[6] , sln[8]].join + 
+				[sln[9] , sln[8] , sln[1]].join
+			next if not s.size == 16
+			slns << s.to_i
+		end
+		slns.max
+	end
+	
+	#Totient maximum
+	def problem69
+		# wiki
+		prime_list = primes(200)
+		n = 1
+		for p in prime_list
+			return n if n * p > 1e6
+			n = n * p
+		end
+	end
+	
+	#Totient permutation
+	def problem70
+		upto = 1000000
+		prime_list = primes(upto)
+		prime_index = 0
+		for n in (10..upto)
+			loop do
+				break if prime_list[prime_index + 1] > n
+				prime_index += 1
+			end
+			euler = n
+			for i in (0..prime_index)
+				p = prime_list[i]
+				next if not n % p == 0
+				euler = euler * (p - 1) / p
+			end
+			if euler.to_s.split("").sort == n.to_s.split("").sort
+				print [euler, n]
+			end
+		end
+			
 	end
 	
 	
 	
 	
-	
-	
-	
-	
+	#ruby -I. euler.rb
 	
 	def method_missing(method_name, *args, &block)
 		#missing the method whose name is "problemXX"
