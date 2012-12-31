@@ -60,9 +60,9 @@ class Problem
 
 	#10001st prime
 	def problem7
-		primes = Prime.new
-		num= primes.next
-		10000.times { num = primes.next }
+		prime = Prime.new
+		num= prime.next
+		10000.times { num = prime.next }
 		return num
 	end
 
@@ -97,12 +97,12 @@ class Problem
 	#Summation of primes
 	def problem10
 		return 142913828922
-		primes = Prime.new
+		prime = Prime.new
 		sum = 0
 		loop do
-			prime = primes.next
-			break if prime >= 2e6
-			sum += prime
+			p = prime.next
+			break if p >= 2e6
+			sum += p
 		end
 		return sum
 	end
@@ -406,17 +406,17 @@ class Problem
 	#Circular primes
 	def problem35
 		prime_enum = Prime.new
-		primes, circular = Hash.new(false), []
+		prime, circular = Hash.new(false), []
 
 		while (prime = prime_enum.next) < 1e6
-			primes[prime] = true
+			prime[prime] = true
 		end
 
-		primes.each_key do |x|
+		prime.each_key do |x|
 			s = x.to_s
 			is_circular = true
 			while (s = s[-1,1] + s[0..-2]) != x.to_s
-				if not primes[s.to_i]
+				if not prime[s.to_i]
 					is_circular = false
 				end
 			end
@@ -826,7 +826,7 @@ class Problem
 		
 		print "problem 60 take a very long time. csharp or python version which fit in the one-minute solution category is available\n"
 		
-		@list = primes(10000) 
+		@list = primes(0, 10000) 
 		@pairs = {} 
 		
 		@solution = []
@@ -970,8 +970,97 @@ class Problem
 		print sqrt_root_cf(23)
 	end
 	
+	#Ordered fractions
+	def problem70
+		#http://www.mathblog.dk Assuming n to have 2 factors around root of max
+		ratio_min, phi_min, n_min = 1e7
+		prime_list = primes(3000, 5000)
+		for i in (0...prime_list.size)
+			for j in (i+1...prime_list.size)
+				n = prime_list[i]*prime_list[j]
+				phi = (prime_list[i]-1) * (prime_list[j]-1)
+				
+				break if n > 1e7
+				next if not n.to_s.split("").sort == phi.to_s.split("").sort
+				
+				ratio = n / phi
+				if ratio < ratio_min
+					ratio_min, phi_min, n_min = ratio, phi, n
+				end
+			end
+		end
+		n_min 
+	end
 	
+	#Ordered fractions
+	def problem71	
+		low, up = 2, 1000000	
+		em, dm, nm = 1, 0, 0
+		while up >= low
+			d = up
+			n = ((3*d - 1) / 7).to_i # cause n/d < 3/7 => n < (d * 3) / 7
+			e = 3/7 - n/d
+			
+			if e < em
+				em, dm, nm = e, d, n
+				#б▀ e < em
+				#бр	3/7 - n/d < 3/7 - nm/dm  
+				#бр	d > dm*(3*d - 7*n)/(3*dm - 7*nm) in which 3*d - 7*n >= 1
+				#бр	d > dm/(3*dm - 7*nm)
+				low = dm / (3*dm - 7*nm) 
+			end
+			up -= 1
+		end
+		return nm
+	end
 	
+	#Counting fractions
+	def problem72
+		#def count_farey(n)
+		#	fn = (n + 3) * n / 2
+		#	for d in (2..n)
+		#		fn -= count_farey( n.div(d) )
+		#	end
+		#	return fn
+		#end
+		#count_farey(100000)
+		#prime_list = primes(2,1000000)
+		#def mobius(n, prime_list)
+		#	p, w = 0, 0
+		#	loop do
+		#		prime = prime_list[p]
+		#		break if prime > n 
+		#		return 0 if 0 == n % (prime * prime)
+		#		w += 1 if 0 == n % prime
+		#		p += 1
+		#	end
+		#	return (-1)**w
+		#end
+		
+		#def count_farey(n, prime_list)
+		#	fn = 3
+		#	for d in (1..n)
+		#		fn += mobius(d, prime_list) * ( n.div(d)**2 )
+		#	end
+		#	fn /= 2
+		#end
+		#count_farey(10000, prime_list)
+		limit = 1000000
+		phi = (0..limit).to_a
+		result = 0
+		for i in (2..limit)
+			if phi[i] == i
+				i.step(limit, i).each do |j|
+					print [i, j, phi[j], (i - 1) / i], "\n" if j == 100
+					phi[j] = phi[j] * (i - 1) / i
+				end	
+			end
+			result += phi[i]
+			print "phi[4]:",phi[i], "\n" if i == 100
+			gets if i == 100
+		end
+		result
+	end
 	
 	
 	

@@ -3,7 +3,7 @@ require "problem.rb"
 p = Problem.new()
 t1 = Time.now
 
-(64..400).each do |n|
+(71..400).each do |n|
 	t1 = Time.now	
 	r = p.send("problem%d"%n)
 	t2 = Time.now
