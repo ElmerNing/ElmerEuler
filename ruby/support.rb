@@ -49,7 +49,7 @@ def proper_divisors_sum(x)
 	proper_divisors(x).inject(0) {|sum, x| sum + x}
 end
 
-def primes(upto)
+def primes(lowto, upto)
 	prime_list = []
 	Prime.new.each do |x|
 		break if x > upto			
@@ -57,4 +57,5 @@ def primes(upto)
 	end
 	return prime_list
 end
+
 
