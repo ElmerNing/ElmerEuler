@@ -408,8 +408,8 @@ class Problem
 		prime_enum = Prime.new
 		prime, circular = Hash.new(false), []
 
-		while (prime = prime_enum.next) < 1e6
-			prime[prime] = true
+		while (p = prime_enum.next) < 1e6
+			prime[p] = true
 		end
 
 		prime.each_key do |x|
@@ -1031,7 +1031,7 @@ class Problem
 	#Totient maximum
 	def problem69
 		# wiki
-		prime_list = primes(200)
+		prime_list = primes(0, 200)
 		n = 1
 		for p in prime_list
 			return n if n * p > 1e6
@@ -1085,75 +1085,75 @@ class Problem
 	
 	#Counting fractions
 	def problem72
-		#def count_farey(n)
-		#	fn = (n + 3) * n / 2
-		#	for d in (2..n)
-		#		fn -= count_farey( n.div(d) )
-		#	end
-		#	return fn
-		#end
-		#count_farey(100000)
-		#prime_list = primes(2,1000000)
-		#def mobius(n, prime_list)
-		#	p, w = 0, 0
-		#	loop do
-		#		prime = prime_list[p]
-		#		break if prime > n 
-		#		return 0 if 0 == n % (prime * prime)
-		#		w += 1 if 0 == n % prime
-		#		p += 1
-		#	end
-		#	return (-1)**w
-		#end
-		
-		#def count_farey(n, prime_list)
-		#	fn = 3
-		#	for d in (1..n)
-		#		fn += mobius(d, prime_list) * ( n.div(d)**2 )
-		#	end
-		#	fn /= 2
-		#end
-		#count_farey(10000, prime_list)
 		limit = 1000000
 		phi = (0..limit).to_a
 		result = 0
 		for i in (2..limit)
 			if phi[i] == i
 				i.step(limit, i).each do |j|
-					print [i, j, phi[j], (i - 1) / i], "\n" if j == 100
 					phi[j] = phi[j] * (i - 1) / i
 				end	
 			end
 			result += phi[i]
-			print "phi[4]:",phi[i], "\n" if i == 100
-			gets if i == 100
 		end
 		result
 	end
 	
-	#Totient permutation
-	def problem70
-		upto = 1000000
-		prime_list = primes(upto)
-		prime_index = 0
-		for n in (10..upto)
-			loop do
-				break if prime_list[prime_index + 1] > n
-				prime_index += 1
-			end
-			euler = n
-			for i in (0..prime_index)
-				p = prime_list[i]
-				next if not n % p == 0
-				euler = euler * (p - 1) / p
-			end
-			if euler.to_s.split("").sort == n.to_s.split("").sort
-				print [euler, n]
+	#Counting fractions in a range
+	def problem73
+		def count_fractions(d, s, e)
+			m = (s.numerator  + e.numerator)/(s.denominator + e.denominator)
+			if m.denominator <= d
+				return count_fractions(d, s, m) + count_fractions(d, m, e)
+			else
+				return 1
 			end
 		end
-			
+		#return count_fractions( 12000, 1/3, 1/2) + 1
+		return count_fractions( 4, 0, 1) - 1
 	end
 	
+	#Digit factorial chains
+	def problem74
+		limit = 1000000
+		def digit_factial(n)
+			factial = [1,1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
+			n.to_s.split("").map{|x| x.to_i}.inject(0){|sum, x| sum + factial[x]}
+		end
+		cache = Array.new(limit+1)
+		cache[169],cache[363601],cache[1354] = 3,3,3
+		cache[871],cache[872],cache[45361],cache[45362] = 2,2,2,2
+		count = 0
+		for n in (1..limit)
+			len, chain = 0, []
+			while chain[-1] != n
+				chain << n
+				if n < limit and cache[n]
+					len += cache[n]
+					break
+				end
+				n = digit_factial(n)
+				len += 1
+			end
+			chain.each_index do |index|
+				nn = chain[index]
+				if nn <= limit
+					cache[nn] = len - index
+				end
+			end
+			count += 1 if len >= 60
+		end
+		return count
+	end
+	
+	#Digit factorial chains
+	def problem75
+		limit = 1500000
+		zs = Array.new(limit) { |index| 0 }
+		for x in (1..limit**0.5)
+			for y in (x..)
+		end
+	end
 	
 	
 	

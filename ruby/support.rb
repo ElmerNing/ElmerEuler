@@ -50,12 +50,15 @@ def proper_divisors_sum(x)
 end
 
 def primes(lowto, upto)
-	prime_list = []
-	Prime.new.each do |x|
-		break if x > upto			
-		prime_list << x
+	#Eratosthenes screening method
+	isprime = Array.new(upto + 1) {|index| true}
+	for i in (2..upto)
+		next if not isprime[i]
+		(i+i).step(upto, i).each do |j|
+			isprime[j] = false
+		end
 	end
-	return prime_list
+	(lowto..upto).select { |x| isprime[x] }
 end
 
 

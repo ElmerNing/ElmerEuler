@@ -2,8 +2,9 @@ require "problem.rb"
 
 p = Problem.new()
 t1 = Time.now
-
-	t1 = Time.now		r = p.send("problem%d"%n)
+for n in (73..75)
+	t1 = Time.now
+	r = p.send("problem%d"%n)
 	t2 = Time.now
 	if r != :no_solve
 		print "problem%d >> time:%f\tresult:%s\n"%[n, (t2-t1), r.to_s]
