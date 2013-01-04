@@ -1149,12 +1149,41 @@ class Problem
 	#Digit factorial chains
 	def problem75
 		limit = 1500000
-		zs = Array.new(limit) { |index| 0 }
-		for x in (1..limit**0.5)
-			for y in (x..)
+		result = 0
+		mlimit = (limit**0.5).to_i
+		abc = Array.new(limit+1){|index| 0}
+		for m in (2..mlimit)
+			for n in (1...m)
+				if (m+n)%2 == 1 and gcd(m,n) == 1
+					p = 2*m*(m+n)
+					pk = p	
+					while pk < limit
+						abc[pk] += 1
+						result+=1 if abc[pk] == 1
+						result-=1 if abc[pk] == 2
+						pk += p	
+					end
+				end	
+			end
 		end
+		return result
 	end
 	
+	def problem76
+		num = 100
+		cache = Array.new(num + 1)
+		cache[0] = Array.new(0 + 1){|index| 1}
+		for n in (1..num)
+			cache[n] = Array.new(n+1)
+			cache[n][0] = 0
+			for i in (1..n) #i is the first addend
+				remain = n-i
+				remain_limit = i < remain ? i : remain
+				cache[n][i] = cache[n][i-1] + cache[remain][remain_limit]
+			end
+		end
+		return cache[num][num] - 1 #delete only one addend situation
+	end
 	
 	
 	#ruby -I. euler.rb
