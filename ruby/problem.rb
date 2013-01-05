@@ -224,7 +224,7 @@ class Problem
 				return array
 			else
 				div, mod = index.divmod(permutation(array.size - 1, array.size - 1))
-				return ([]<<array.delete_at(div)) + IndexOfPerm(array, mod)
+				return ([] << array.delete_at(div)) + IndexOfPerm(array, mod)
 			end
 		end
 		IndexOfPerm([0,1,2,3,4,5,6,7,8,9,], 1e6 - 1).inject(""){|str, element| str + element.to_s}
@@ -1072,10 +1072,10 @@ class Problem
 			
 			if e < em
 				em, dm, nm = e, d, n
-				#б▀ e < em
-				#бр	3/7 - n/d < 3/7 - nm/dm  
-				#бр	d > dm*(3*d - 7*n)/(3*dm - 7*nm) in which 3*d - 7*n >= 1
-				#бр	d > dm/(3*dm - 7*nm)
+				#	e < em
+				#	3/7 - n/d < 3/7 - nm/dm  
+				#	d > dm*(3*d - 7*n)/(3*dm - 7*nm) in which 3*d - 7*n >= 1
+				#	d > dm/(3*dm - 7*nm)
 				low = dm / (3*dm - 7*nm) 
 			end
 			up -= 1
