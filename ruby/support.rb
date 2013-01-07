@@ -52,6 +52,7 @@ end
 def primes(lowto, upto)
 	#Eratosthenes screening method
 	isprime = Array.new(upto + 1) {|index| true}
+	isprime[0], isprime[1] = false, false
 	for i in (2..upto)
 		next if not isprime[i]
 		(i+i).step(upto, i).each do |j|

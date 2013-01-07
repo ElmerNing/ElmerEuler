@@ -2,7 +2,7 @@ require "problem.rb"
 
 p = Problem.new()
 t1 = Time.now
-for n in (75..80)
+for n in (79..80)
 	t1 = Time.now
 	r = p.send("problem%d"%n)
 	t2 = Time.now

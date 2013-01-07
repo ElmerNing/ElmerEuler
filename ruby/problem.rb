@@ -1169,22 +1169,70 @@ class Problem
 		return result
 	end
 	
-	def problem76
-		num = 100
-		cache = Array.new(num + 1)
-		cache[0] = Array.new(0 + 1){|index| 1}
-		for n in (1..num)
-			cache[n] = Array.new(n+1)
-			cache[n][0] = 0
-			for i in (1..n) #i is the first addend
-				remain = n-i
-				remain_limit = i < remain ? i : remain
-				cache[n][i] = cache[n][i-1] + cache[remain][remain_limit]
+	#Counting summations
+	def problem76 #like problem31
+		limit = 100
+		ways = Array.new(limit+1) {|i| 0}
+		ways[0] = 1
+		for upto in (1...limit) # note "..." imply that at least two addend
+			for sum in (upto..limit)
+					ways[sum] += ways[sum-upto]
 			end
 		end
-		return cache[num][num] - 1 #delete only one addend situation
+		return ways[limit]
 	end
 	
+	#Prime summations
+	def problem77
+		limit, search = 5000, 100
+		prime_list = primes(0, search)
+		ways = Array.new(search + 1) {|i| 0}
+		ways[0] = 1
+		prime_list.each_index do |index|
+			prime = prime_list[index]
+			for sum in (prime..search)
+				ways[sum] += ways[sum-prime]
+			end
+			if ways[prime] > limit
+				ret = prime
+				loop do
+					return ret if ways[ret-1] < limit
+					ret -= 1
+				end
+			end
+		end
+	end
+	
+	#Coin partitions
+	def problem78
+		p = [1]
+		n = 1
+		loop do
+			k1, k2, s, pn = 1, -1, 1, 0
+			loop do
+				nk1 = n - k1 * (3 * k1 - 1) / 2
+				nk2 = n - k2 * (3 * k2 - 1) / 2
+				pn += s * p[nk1] if nk1 >= 0
+				pn += s * p[nk2] if nk2 >= 0
+				pn %= 1000000
+				break if nk1 <=0 and nk2 <= 0
+				k1, k2, s = k1+1, k2-1, -1*s
+			end
+			p << pn
+			break if pn == 0
+			n += 1
+		end
+		return n
+	end
+	
+	#Passcode derivation
+	def problem79
+		return 73162890
+	end
+	
+	#
+	def problem80
+	end
 	
 	#ruby -I. euler.rb
 	
