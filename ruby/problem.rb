@@ -1230,9 +1230,79 @@ class Problem
 		return 73162890
 	end
 	
-	#
+	#Square root digital expansion
 	def problem80
+		def digital_sum_of_square_root(n)
+			sqrt = Math.sqrt(n).to_i
+			return 0 if sqrt*sqrt == n
+			sum = sqrt
+			for i in (2..100)
+				sqrt, n = sqrt*10, n*100
+				for digit in (1..10)
+					if (sqrt+digit) * (sqrt+digit) > n
+						sum += digit-1
+						sqrt += digit-1
+						break
+					end
+				end
+			end
+			return sum
+		end
+		sum = 0
+		for n in (2..100)
+			sum += digital_sum_of_square_root(n)
+		end
+		sum
 	end
+	
+	#Path sum: two ways
+	def problem81
+		matrix = File.readlines("matrix.txt").map do |line| 
+			line.chomp.split(",").map{|x| x.to_i}
+		end
+		len = matrix.size
+		for n in (1...len)
+			matrix[n][0] += matrix[n-1][0]
+			matrix[0][n] += matrix[0][n-1]
+			for i in (1...n)
+				matrix[n][i] += [matrix[n-1][i],matrix[n][i-1]].min
+				matrix[i][n] += [matrix[i-1][n], matrix[i][n-1]].min
+			end			
+			matrix[n][n] += [matrix[n-1][n], matrix[n][n-1]].min
+		end
+		matrix[79][79]
+	end
+	
+	#Path sum: three ways
+	def problem82
+		matrix = File.readlines("matrix.txt").map do |line| 
+			line.chomp.split(",").map{|x| x.to_i}
+		end
+		
+		len = matrix.size
+		for c in (1...len)
+			integral = Array.new(len+1) {|i| 0}
+			for r in (1..len)
+				integral[r] = matrix[r-1][c] + integral[r-1]
+			end
+			
+			for r in (0...len)
+				matrix[r][c] = (0...len).map do |rr| 
+					s,e = [r,rr].sort!
+					sum = integral[e+1] - integral[s] + matrix[rr][c-1]
+				end.min
+			end
+		end
+		(0...len).map{|r| matrix[r][-1]}.min
+	end
+	
+	#Path sum: four ways
+	def problem83
+		
+	end
+	
+	
+	
 	
 	#ruby -I. euler.rb
 	
