@@ -1297,8 +1297,78 @@ class Problem
 	end
 	
 	#Path sum: four ways
+	class Node
+		def initialize(g,h,d)
+			@g = g
+			@h = h
+			@d = d
+		end
+		attr_accessor :g
+		attr_accessor :h
+		attr_accessor :d
+	end
 	def problem83
+		matrix = File.readlines("matrix.txt").map do |line| 
+			line.chomp.split(",").map{|x| x.to_i}
+		end
 		
+		len = matrix.size
+		minval = matrix.map{|line| line.min}.min
+		maxval = matrix.map{|line| line.max}.max
+		
+		nodes = Array.new(len) do |r|
+			Array.new(len) do |c|
+				maxg = maxval * len * len
+				h = (len * 2 - r - c - 1) * minval
+				Node.new(maxg, h, nil)
+			end
+		end
+		
+		nodes[0][0].g = matrix[0][0]
+		openlist = { [0, 0] => nodes[0][0]}
+		closelist = {}
+		walkable = (0...len)
+		
+		#finding
+		until openlist.empty?
+			key, node = openlist.min {|a, b| (a[1].g + a[1].h) <=> (b[1].g + b[1].h) }
+			openlist.delete(key)
+			closelist[key] = node
+			
+			break if key == [len-1,len-1]
+			
+			#current
+			r, c = key
+			[[0,1],[0,-1],[1,0],[-1,0]].each do |dr,dc|
+				nr, nc, nkey = r+dr, c+dc, [r+dr, c+dc]
+				
+				#ingnore
+				if not walkable.include?(nr) or not walkable.include?(nc) or closelist.has_key?(nkey)
+					next
+				end
+				
+				#adjacent 
+				next_g, next_d = node.g + matrix[nr][nc], [dr, dc]
+				next_node  = nodes[nr][nc]
+				
+				#already in openlist
+				if openlist.has_key?(nkey)
+					if next_g < next_node.g
+						next_node.g = next_g
+						next_node.d = next_d
+					end
+				end
+				
+				#not in openlist
+				if not openlist.has_key?(nkey)
+					next_node.g = next_g
+					next_node.d = next_d
+					openlist[nkey] = next_node
+				end
+			end
+		end
+		
+		closelist[[len-1,len-1]].g
 	end
 	
 	
