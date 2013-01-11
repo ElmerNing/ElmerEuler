@@ -1072,10 +1072,10 @@ class Problem
 			
 			if e < em
 				em, dm, nm = e, d, n
-				#б▀ e < em
-				#бр	3/7 - n/d < 3/7 - nm/dm  
-				#бр	d > dm*(3*d - 7*n)/(3*dm - 7*nm) in which 3*d - 7*n >= 1
-				#бр	d > dm/(3*dm - 7*nm)
+				#	e < em
+				#	3/7 - n/d < 3/7 - nm/dm  
+				#	d > dm*(3*d - 7*n)/(3*dm - 7*nm) in which 3*d - 7*n >= 1
+				#	d > dm/(3*dm - 7*nm)
 				low = dm / (3*dm - 7*nm) 
 			end
 			up -= 1
@@ -1183,6 +1183,22 @@ class Problem
 			end
 		end
 		return cache[num][num] - 1 #delete only one addend situation
+	end
+	
+	def problem77
+		num = 100
+		cache = Array.new(num + 1) { |index| Array.new(num + 1) {|index| 0} }
+		cache[0][0] = 1
+		for n in (1..num)
+			for m in (n..num)
+				if n < m
+					cache[n][m] = cache[n][m-1]
+				else
+					cache[n][m] = cache[n][m-1] + cache[n-m][m]
+				end
+			end
+		end
+		cache[100][100]
 	end
 	
 	
