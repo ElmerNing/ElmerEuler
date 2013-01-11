@@ -224,7 +224,7 @@ class Problem
 				return array
 			else
 				div, mod = index.divmod(permutation(array.size - 1, array.size - 1))
-				return ([]<<array.delete_at(div)) + IndexOfPerm(array, mod)
+				return ([] << array.delete_at(div)) + IndexOfPerm(array, mod)
 			end
 		end
 		IndexOfPerm([0,1,2,3,4,5,6,7,8,9,], 1e6 - 1).inject(""){|str, element| str + element.to_s}
@@ -1169,38 +1169,207 @@ class Problem
 		return result
 	end
 	
-	def problem76
-		num = 100
-		cache = Array.new(num + 1)
-		cache[0] = Array.new(0 + 1){|index| 1}
-		for n in (1..num)
-			cache[n] = Array.new(n+1)
-			cache[n][0] = 0
-			for i in (1..n) #i is the first addend
-				remain = n-i
-				remain_limit = i < remain ? i : remain
-				cache[n][i] = cache[n][i-1] + cache[remain][remain_limit]
+	#Counting summations
+	def problem76 #like problem31
+		limit = 100
+		ways = Array.new(limit+1) {|i| 0}
+		ways[0] = 1
+		for upto in (1...limit) # note "..." imply that at least two addend
+			for sum in (upto..limit)
+					ways[sum] += ways[sum-upto]
 			end
 		end
-		return cache[num][num] - 1 #delete only one addend situation
+		return ways[limit]
 	end
 	
+	#Prime summations
 	def problem77
-		num = 100
-		cache = Array.new(num + 1) { |index| Array.new(num + 1) {|index| 0} }
-		cache[0][0] = 1
-		for n in (1..num)
-			for m in (n..num)
-				if n < m
-					cache[n][m] = cache[n][m-1]
-				else
-					cache[n][m] = cache[n][m-1] + cache[n-m][m]
+		limit, search = 5000, 100
+		prime_list = primes(0, search)
+		ways = Array.new(search + 1) {|i| 0}
+		ways[0] = 1
+		prime_list.each_index do |index|
+			prime = prime_list[index]
+			for sum in (prime..search)
+				ways[sum] += ways[sum-prime]
+			end
+			if ways[prime] > limit
+				ret = prime
+				loop do
+					return ret if ways[ret-1] < limit
+					ret -= 1
 				end
 			end
 		end
-		cache[100][100]
 	end
 	
+	#Coin partitions
+	def problem78
+		p = [1]
+		n = 1
+		loop do
+			k1, k2, s, pn = 1, -1, 1, 0
+			loop do
+				nk1 = n - k1 * (3 * k1 - 1) / 2
+				nk2 = n - k2 * (3 * k2 - 1) / 2
+				pn += s * p[nk1] if nk1 >= 0
+				pn += s * p[nk2] if nk2 >= 0
+				pn %= 1000000
+				break if nk1 <=0 and nk2 <= 0
+				k1, k2, s = k1+1, k2-1, -1*s
+			end
+			p << pn
+			break if pn == 0
+			n += 1
+		end
+		return n
+	end
+	
+	#Passcode derivation
+	def problem79
+		return 73162890
+	end
+	
+	#Square root digital expansion
+	def problem80
+		def digital_sum_of_square_root(n)
+			sqrt = Math.sqrt(n).to_i
+			return 0 if sqrt*sqrt == n
+			sum = sqrt
+			for i in (2..100)
+				sqrt, n = sqrt*10, n*100
+				for digit in (1..10)
+					if (sqrt+digit) * (sqrt+digit) > n
+						sum += digit-1
+						sqrt += digit-1
+						break
+					end
+				end
+			end
+			return sum
+		end
+		sum = 0
+		for n in (2..100)
+			sum += digital_sum_of_square_root(n)
+		end
+		sum
+	end
+	
+	#Path sum: two ways
+	def problem81
+		matrix = File.readlines("matrix.txt").map do |line| 
+			line.chomp.split(",").map{|x| x.to_i}
+		end
+		len = matrix.size
+		for n in (1...len)
+			matrix[n][0] += matrix[n-1][0]
+			matrix[0][n] += matrix[0][n-1]
+			for i in (1...n)
+				matrix[n][i] += [matrix[n-1][i],matrix[n][i-1]].min
+				matrix[i][n] += [matrix[i-1][n], matrix[i][n-1]].min
+			end			
+			matrix[n][n] += [matrix[n-1][n], matrix[n][n-1]].min
+		end
+		matrix[79][79]
+	end
+	
+	#Path sum: three ways
+	def problem82
+		matrix = File.readlines("matrix.txt").map do |line| 
+			line.chomp.split(",").map{|x| x.to_i}
+		end
+		
+		len = matrix.size
+		for c in (1...len)
+			integral = Array.new(len+1) {|i| 0}
+			for r in (1..len)
+				integral[r] = matrix[r-1][c] + integral[r-1]
+			end
+			
+			for r in (0...len)
+				matrix[r][c] = (0...len).map do |rr| 
+					s,e = [r,rr].sort!
+					sum = integral[e+1] - integral[s] + matrix[rr][c-1]
+				end.min
+			end
+		end
+		(0...len).map{|r| matrix[r][-1]}.min
+	end
+	
+	#Path sum: four ways
+	class Node
+		def initialize(g,h,d)
+			@g = g
+			@h = h
+			@d = d
+		end
+		attr_accessor :g
+		attr_accessor :h
+		attr_accessor :d
+	end
+	def problem83
+		matrix = File.readlines("matrix.txt").map do |line| 
+			line.chomp.split(",").map{|x| x.to_i}
+		end
+		
+		len = matrix.size
+		minval = matrix.map{|line| line.min}.min
+		maxval = matrix.map{|line| line.max}.max
+		
+		nodes = Array.new(len) do |r|
+			Array.new(len) do |c|
+				maxg = maxval * len * len
+				h = (len * 2 - r - c - 1) * minval
+				Node.new(maxg, h, nil)
+			end
+		end
+		
+		nodes[0][0].g = matrix[0][0]
+		openlist = { [0, 0] => nodes[0][0]}
+		closelist = {}
+		walkable = (0...len)
+		
+		#finding
+		until openlist.empty?
+			key, node = openlist.min {|a, b| (a[1].g + a[1].h) <=> (b[1].g + b[1].h) }
+			openlist.delete(key)
+			closelist[key] = node
+			
+			break if key == [len-1,len-1]
+			
+			#current
+			r, c = key
+			[[0,1],[0,-1],[1,0],[-1,0]].each do |dr,dc|
+				nr, nc, nkey = r+dr, c+dc, [r+dr, c+dc]
+				
+				#ingnore
+				if not walkable.include?(nr) or not walkable.include?(nc) or closelist.has_key?(nkey)
+					next
+				end
+				
+				#adjacent 
+				next_g, next_d = node.g + matrix[nr][nc], [dr, dc]
+				next_node  = nodes[nr][nc]
+				
+				#already in openlist
+				if openlist.has_key?(nkey)
+					if next_g < next_node.g
+						next_node.g = next_g
+						next_node.d = next_d
+					end
+				end
+				
+				#not in openlist
+				if not openlist.has_key?(nkey)
+					next_node.g = next_g
+					next_node.d = next_d
+					openlist[nkey] = next_node
+				end
+			end
+		end
+		
+		closelist[[len-1,len-1]].g
+	end
 	
 	#ruby -I. euler.rb
 	
