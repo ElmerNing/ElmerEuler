@@ -1371,8 +1371,133 @@ class Problem
 		closelist[[len-1,len-1]].g
 	end
 	
+	#Monopoly odds
+	def problem84
+		@squares = ["GO","A1", "CC1", "A2", "T1", "R1", "B1", "CH1", "B2", "B3"] +
+				  ["JAIL", "C1", "U1", "C2", "C3", "R2", "D1", "CC2", "D2", "D3"] +
+				  ["FP", "E1", "CH2", "E2", "E3", "R3", "F1", "F2", "U2", "F3"] + 
+				  ["G2J", "G1", "G2", "CC3", "G3", "R4", "CH3", "H1", "T2", "H2"]
+		
+		def goto( dst)
+			Proc.new do |now|
+				ret = 0
+				@squares.each_index do |index|
+					if (@squares[index] == dst)
+						 ret = index
+					end
+				end
+				ret
+			end
+		end
+		
+		def move(step)
+			Proc.new do |now|
+				(now + step) % @squares.length
+			end
+		end
+		
+		def next_at(prefix)
+			Proc.new do |now| 
+				ret = 0
+				loop do
+					now += 1
+					now %= @squares.length
+					if @squares[now].start_with?(prefix)
+						ret = now
+						break
+					end
+				end
+				ret
+			end
+		end
+		
+		sq_index, cc_index, ch_index, doubles = 0, 0, 0, 0
+		cc = [goto("GO"), goto("JAIL")] + [move(0)] * 14
+		ch = [goto("GO"), goto("JAIL"), goto("C1"), goto("E3"), goto("H2"), goto("R1"), next_at("R"), next_at("R"), next_at("U"), move(-3)] + [move(0)] * 6
+		cc.shuffle!
+		ch.shuffle!
+		
+		statistics = Hash.new{|hash,key| hash[key] = 0}
+		@squares.each {|item| statistics[item] = 0}
+		
+		(1..1000000).each do |time|
+			dice1,dice2 = rand(3) + 1, rand(3) + 1
+			
+			if dice1 == dice2
+				doubles += 1
+			else
+				doubles = 0
+			end
+			if doubles == 3
+				doubles = 0
+				sq_index = goto("JAIL").call(sq_index)
+			end
+			
+			dice = dice1 + dice2
+			sq_index = move(dice).call(sq_index)
+			last_index = -1
+			loop do
+				break if last_index == sq_index
+				last_index = sq_index
+				var = @squares[sq_index]
+				if var.start_with?("CC")
+					sq_index = cc[cc_index].call(sq_index)
+					cc_index = (cc_index+1)%cc.length
+					next
+				end
+				if var.start_with?("CH")
+					sq_index = ch[ch_index].call(sq_index)
+					ch_index = (ch_index+1)%ch.length
+					next
+				end
+				if var.start_with?("G2J")
+					sq_index =goto("JAIL").call(sq_index)
+					next
+				end
+				break
+			end
+			statistics[@squares[sq_index]] += 1
+		end
+		"wrong answer"
+	end
 	
+	#Counting rectangles
+	def problem85
+		def count(w)
+			return w*(w+1)/2
+		end
+		def recount(count)
+			return (-1 + Math.sqrt(1+4*2*count))/2
+		end
+		
+		w = 1
+		nearest = 0
+		area = 0
+		loop do
+			count_w = count(w)
+			break if count_w > Math.sqrt(2000000)
+			count_h = 2000000 / count_w
+			
+			hf = recount(count_h)
+			
+			count1 = count(hf.floor) * count_w
+			count2 = count(hf.ceil) * count_w 
+			if (nearest - 2000000).abs > (count1-2000000).abs
+				nearest = count1
+				area = hf.floor*w
+			end
+			if (nearest - 2000000).abs > (count2-2000000).abs
+				nearest = count2
+				area = hf.ceil*w
+			end
+			w+=1
+		end
+		area
+	end
 	
+	def problem86
+		
+	end
 	
 	#ruby -I. euler.rb
 	
