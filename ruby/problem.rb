@@ -1495,8 +1495,65 @@ class Problem
 		area
 	end
 	
+	#Cuboid route
 	def problem86
-		
+		lim = 2000
+		m = [0] * lim
+		tri = ppt() {|a,b,c| a<lim || b<lim}
+		for a,b,c in tri
+			aa,bb,cc = a, b, c
+			while a < lim or b < lim
+				m[a] += 1 + (a - ((b+1)/2).floor) if a<lim and b<2*a
+				m[b] += (a/2).floor if b<lim
+				a,b,c = a+aa,b+bb,c+cc
+			end
+		end
+		i, s = 0, 0
+		while s<1000000
+			i, s = i+1, s+m[i]
+		end
+		i-1
+	end
+	
+	#Prime power triples
+	def problem87
+		a = primes(0, 7072).map{|a| a*a}
+		b = primes(0, 415).map{|b| b*b*b}
+		c = primes(0, 85).map{|c| c*c*c*c}
+		set = Set.new{}
+		count = 0
+		for four in c
+			for cub in b
+				for sqr in a
+					result = sqr + cub + four
+					break if result > 50000000
+					set << result
+				end
+			end
+		end
+		set.length
+	end
+	
+	#Product-sum numbers
+	def problem88
+		max = 240000
+		for factorNum in (2..14)
+			factors = Array.new(factorNum) {|index| 2}
+			loop do
+				loop do
+					product = factors.inject(1) {|product,item| product*item}
+					break if product > max
+					factors[0] += 1
+				end
+				for n in (0...factorNum)
+					
+				end
+				
+			end
+			
+			
+			
+		end
 	end
 	
 	#ruby -I. euler.rb

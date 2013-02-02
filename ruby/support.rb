@@ -1,4 +1,4 @@
-#class Support
+require "problem.rb"
 
 def factoring(num, start = 2) # => Array
 	candidate = (start..Math.sqrt(num).to_int).to_a
@@ -13,13 +13,13 @@ def factoring(num, start = 2) # => Array
 end
 	
 def fibonacci # => Enumerator
-	Enumerator.new { |y|  
-   		a = 1; b = 1;
-   		loop {  
-   			y << a
-   			a, b = b, a + b 
+	Enumerator.new { |y|
+		a = 1; b = 1;
+		loop {
+			y << a
+			a, b = b, a + b 
 		}
-	} 
+	}
 end
 
 def gcd(x, y) # => Interger
@@ -62,4 +62,28 @@ def primes(lowto, upto)
 	(lowto..upto).select { |x| isprime[x] }
 end
 
-
+def ppt() # => Array
+	#generator primitive  pythagorean triple 
+	#http://mathworld.wolfram.com/PythagoreanTriple.html
+	v = [[3,4,5]]
+	u = Matrix[[1,2,2], [-2,-1,-2], [2,2,3]]
+	a = Matrix[[1,2,2], [2,1,2], [2,2,3]]
+	d = Matrix[[-1,-2,-2], [2,1,2], [2,2,3]]
+	
+	y = []
+	loop do
+		break if v.length == 0
+		y += v
+		v =v.inject([]) do |news, org|
+			[u,a,d].each do |m|
+				new = Matrix[org] * m
+				row = new.to_a[0].sort
+				if yield(row[0],row[1],row[2])#new.row(0).max <= max
+					news << row
+				end
+			end
+			news
+		end
+	end
+	y.sort_by {|obj| obj[2]}
+end
