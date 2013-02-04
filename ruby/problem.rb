@@ -1570,6 +1570,9 @@ class Problem
 		k.uniq.reduce(:+)
 	end
 	
+	#
+	def problem89
+	end
 	#ruby -I. euler.rb
 	
 	def method_missing(method_name, *args, &block)
