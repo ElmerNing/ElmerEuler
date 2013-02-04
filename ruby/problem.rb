@@ -1570,9 +1570,39 @@ class Problem
 		k.uniq.reduce(:+)
 	end
 	
-	#
-	def problem89
+	#Cube digit pairs
+	def problem90
+		square = [[0,1], [0,4], [0,9], [1,6], [2,5], [3,6], [4,9], [6,4], [8,1]]
+		count = 0
+		(0..9).to_a.combination(6).to_a.combination(2).each do |a|
+			a.map! do |b| 
+				b += [6,9] if b.include?(6) or b.include?(9)
+				b.uniq
+			end
+			valid = true
+			for s in square
+				next if a[0].include?(s[0]) and a[1].include?(s[1])
+				next if a[0].include?(s[1]) and a[1].include?(s[0])
+				valid = false
+				break
+			end
+			count += 1 if valid
+		end
+		count
 	end
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	#ruby -I. euler.rb
 	
 	def method_missing(method_name, *args, &block)
