@@ -1591,7 +1591,10 @@ class Problem
 		count
 	end
 	
-	
+	#Right triangles with integer coordinates
+	def problem91
+		
+	end
 	
 	
 	
