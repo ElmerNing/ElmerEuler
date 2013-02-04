@@ -1536,24 +1536,38 @@ class Problem
 	
 	#Product-sum numbers
 	def problem88
-		max = 240000
+		max, max2 = 12000, 12000*2
+		k = (0..max).to_a.map!{|item| item*2}
+		k[1] = 0
+		
 		for factorNum in (2..14)
 			factors = Array.new(factorNum) {|index| 2}
 			loop do
+
 				loop do
-					product = factors.inject(1) {|product,item| product*item}
-					break if product > max
+					product = factors.reduce(:*)
+					sum = factors.reduce(:+)
+					break if product > max2
+					pk = product - sum + factorNum
+					if pk <= max and product < k[pk]
+						k[pk] = product
+					end
 					factors[0] += 1
 				end
-				for n in (0...factorNum)
-					
-				end
 				
+				over = true
+				for i in (1...factorNum)
+					factors[i] += 1
+					factors[0,i] = [factors[i]] * i
+					product = factors.reduce(:*)
+					next if product > max2
+					over = false
+					break
+				end
+				break if over
 			end
-			
-			
-			
 		end
+		k.uniq.reduce(:+)
 	end
 	
 	#ruby -I. euler.rb
